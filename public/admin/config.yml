@@ -3,7 +3,7 @@
 # Producción: cambia `repo` por tu repositorio de GitHub (ver README).
 backend:
   name: github
-  repo: LuisJesus24/duck-vandal-astro # <- cámbialo
+  repo: LuisJesus24/duckvandal
   branch: main
   base_url: https://api.netlify.com # si publicas en Netlify; en otro host usa tu propio servidor OAuth
   auth_endpoint: auth
