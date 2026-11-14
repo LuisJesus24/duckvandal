@@ -1,0 +1,204 @@
+---
+import Base from '../layouts/Base.astro';
+import { crew } from '../data/crew';
+import { getCollection } from 'astro:content';
+import { site } from '../data/site';
+const retos = (await getCollection('retos'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((r) => ({ id: r.id, title: r.data.title }));
+const words = ['Tienes toda la hoja', 'Firma lo tuyo', 'Duck Vandal', 'El Callejón', 'Cinco patos', 'Un mural'];
+---
+
+<Base>
+  <section class="brand-hero" aria-labelledby="hero-title">
+    <div class="hero-stage">
+    <div class="hero-art">
+    <img
+      src="/art/callejon-768.webp"
+      srcset="/art/callejon-768.webp 768w, /art/callejon-1440.webp 1440w"
+      sizes="100vw"
+      alt="Callejón nocturno con un mural de los cinco patos, luz de neón y reflejos en el pavimento"
+      width="1440"
+      height="810"
+      fetchpriority="high"
+    />
+    <span class="lamp" aria-hidden="true"></span>
+    {crew.map((d) => (
+      <button
+        type="button"
+        class="mural-pato"
+        data-id={d.id}
+        data-name={d.name}
+        style={`--x:${d.mural[0]}%;--y:${d.mural[1]}%;--accent:${d.accent}`}
+        aria-label={`Conocer a ${d.name}`}
+      >{d.name}</button>
+    ))}
+    </div>
+    </div>
+    <p class="pan-hint" aria-hidden="true">← Desliza el mural →</p>
+    <div class="hero-copy">
+      <span class="tape">Lore · Arte · Comunidad</span>
+      <h1 id="hero-title" aria-label="Duck Vandal">
+        <span class="word" aria-hidden="true">{[...'DUCK'].map((c, i) => <span class="ch" style={`--i:${i};--r:${i % 2 ? -7 : 6}`}>{c}</span>)}</span>
+        <span class="word vandal" aria-hidden="true">{[...'VANDAL'].map((c, i) => <span class="ch" style={`--i:${i + 4};--r:${i % 2 ? 7 : -6}`}>{c}</span>)}</span>
+      </h1>
+      <p>Cinco patos, un callejón y una firma que cada quien tiene que encontrar.</p>
+      <div class="hero-actions">
+        <a class="sign" href="/lore/">Entrar al lore</a>
+        <a class="spotify" href="/muro/">Dejar mi arte</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      {[...words, ...words, ...words, ...words].map((w) => <span>{w} ✦</span>)}
+    </div>
+  </div>
+
+  <div class="drip-row" aria-hidden="true">
+    <i style="--x:6%;--w:9px;--h:46px;--d:6s"></i>
+    <i style="--x:17%;--w:12px;--h:78px;--d:7.5s;--delay:1.2s"></i>
+    <i style="--x:31%;--w:7px;--h:34px;--d:5.5s;--delay:2.4s"></i>
+    <i style="--x:44%;--w:10px;--h:62px;--d:8s;--delay:.6s"></i>
+    <i style="--x:58%;--w:8px;--h:40px;--d:6.5s;--delay:3.1s"></i>
+    <i style="--x:71%;--w:13px;--h:90px;--d:9s;--delay:1.8s"></i>
+    <i style="--x:84%;--w:8px;--h:52px;--d:6s;--delay:.2s"></i>
+    <i style="--x:93%;--w:10px;--h:70px;--d:7s;--delay:2.9s"></i>
+  </div>
+
+  <section class="section manifesto" aria-labelledby="manifiesto">
+    <div>
+      <p class="kicker">Manifiesto</p>
+      <h2 id="manifiesto">Todos empiezan <em>copiando.</em></h2>
+      <p>
+        Enzo llenó la última hoja de su libreta con la firma de otro. Hasta que tuvo que hacer una suya y
+        descubrió que le faltaba lo más simple: darle espacio. Duck Vandal es su historia, la de su pandilla
+        y el lugar donde tú también puedes dejar la tuya.
+      </p>
+      <p class="marker" style="font-size:1.8rem;color:#f6e267;margin:0">«{site.tagline}»</p>
+    </div>
+    <div class="poster">
+      <img src="/art/poster.webp" alt="Póster nocturno de la pandilla" width="640" height="800" loading="lazy" />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="entra">
+    <div class="section-head">
+      <div><p class="kicker">Por dónde empezar</p><h2 id="entra">Tres puertas</h2></div>
+    </div>
+    <div class="pillars">
+      <a class="pillar" href="/lore/">
+        <img src="/art/primer-encuentro-2.webp" alt="" loading="lazy" />
+        <span class="tape">Historia</span>
+        <h3>El lore</h3>
+        <p>Cómics, versiones y el misterio del mural.</p>
+      </a>
+      <a class="pillar" href="/pandilla/">
+        <img src="/art/callejon-768.webp" alt="" loading="lazy" />
+        <span class="tape red">Personajes</span>
+        <h3>La pandilla</h3>
+        <p>Duxter, Cuakki, Aco, Morris y Enzo.</p>
+      </a>
+      <a class="pillar" href="/muro/">
+        <img src="/art/sticker.webp" alt="" loading="lazy" />
+        <span class="tape">Comunidad</span>
+        <h3>El muro</h3>
+        <p>Inspírate, dibuja y comparte tu versión.</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="patos">
+    <div class="section-head">
+      <div><p class="kicker">La pandilla</p><h2 id="patos">Cinco firmas</h2></div>
+      <a class="link-more" href="/pandilla/">Ver todos →</a>
+    </div>
+    <div class="crew-strip">
+      {crew.map((d) => (
+        <a class="duck-card" href={`/pandilla/${d.id}/`} style={`--accent:${d.accent}`}>
+          <img src={d.art} alt={`Ilustración de ${d.name}`} loading="lazy" />
+          <div><strong>{d.name}</strong><small>{d.role}</small></div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section feature" aria-labelledby="capitulo">
+    <img src="/art/primer-encuentro-3.webp" alt="Enzo muestra a Duxter sus intentos de escribir ENZO en la última hoja de su libreta." loading="lazy" />
+    <div>
+      <p class="kicker">Historieta de origen</p>
+      <h2 id="capitulo" style="font-size:clamp(44px,7vw,92px)">El primer encuentro</h2>
+      <blockquote>«Tienes toda la hoja, güey. A ver cómo sale en grande.»</blockquote>
+      <p>Una foto a escondidas, una libreta llena de tags ajenos y el primer intento de firmar ENZO.</p>
+      <p><a class="sign" href="/historietas/">Leer la historieta</a></p>
+    </div>
+  </section>
+
+  <div class="marquee alt" aria-hidden="true">
+    <div class="marquee-track">
+      {['Pega tu sticker', 'Hazla más grande', 'Firma con tu nombre', 'Copiar es practicar', 'Deja tu huella'].flatMap((w) => [w, w, w, w]).map((w) => <span>{w} ✦</span>)}
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="community-band">
+      <div>
+        <p class="kicker">Comunidad</p>
+        <h2>Tu pieza va en el muro</h2>
+        <p>Dibuja, rediseña, pega stickers. Cuéntanos qué viste tú en el Callejón y firma con tu nombre.</p>
+        <p style="display:flex;gap:12px;flex-wrap:wrap"><a class="sign" href="/muro/">Ver retos y enviar</a><a class="spotify" href="/marca/">Kit de marca</a></p>
+      </div>
+      <ul aria-label="Retos">
+        {retos.slice(0, 4).map((r) => <li>{r.title}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="taller">
+    <div class="section-head">
+      <div><p class="kicker">Taller</p><h2 id="taller">Juega con el Callejón</h2></div>
+      <a class="link-more" href="/extras/">Todo el taller →</a>
+    </div>
+    <nav class="entry-grid" aria-label="Actividades">
+      <a href="/extras/tarjeta/"><span><strong>Haz tu tarjeta</strong><small>Descárgala para tus Stories</small></span><span class="entry-arrow" aria-hidden="true">↗</span></a>
+      <a href="/extras/juego/"><span><strong>¿De quién es esto?</strong><small>Adivina de qué pato es cada detalle</small></span><span class="entry-arrow" aria-hidden="true">↗</span></a>
+      <a href="/extras/versiones/"><span><strong>Cinco versiones</strong><small>El mismo día, cinco puntos de vista</small></span><span class="entry-arrow" aria-hidden="true">↗</span></a>
+    </nav>
+  </section>
+
+  <dialog id="mural-dialog" aria-labelledby="mural-dialog-title">
+    <form method="dialog"><button class="close-dialog" aria-label="Cerrar">×</button></form>
+    <div id="mural-dialog-content"></div>
+  </dialog>
+
+  <script>
+    // Móvil: el mural llena la pantalla y se desliza; arranca centrado en los patos.
+    const stage = document.querySelector<HTMLElement>('.hero-stage');
+    if (stage && matchMedia('(max-width: 720px)').matches) {
+      stage.scrollLeft = (stage.scrollWidth - stage.clientWidth) / 2;
+      const hint = document.querySelector('.pan-hint');
+      stage.addEventListener('scroll', () => hint?.classList.add('gone'), { once: true, passive: true });
+    }
+  </script>
+
+  <script define:vars={{ crew }}>
+    const dialog = document.getElementById('mural-dialog');
+    const content = document.getElementById('mural-dialog-content');
+    const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    document.querySelectorAll('.mural-pato').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const d = crew.find((c) => c.id === btn.dataset.id);
+        document.querySelector('.mural-pato.is-picked')?.classList.remove('is-picked');
+        btn.classList.add('is-picked');
+        dialog.style.setProperty('--accent', d.accent);
+        content.innerHTML =
+          `<img class="dialog-portrait" src="${d.art}" alt="" width="140"><h2 id="mural-dialog-title" style="font-size:3rem;color:${d.accent}">${esc(d.name)}</h2>` +
+          `<p>«${esc(d.quote)}»</p><div class="dialog-actions"><a class="sign" style="--accent:${d.accent}" href="/pandilla/${d.id}/">Ver ficha</a>` +
+          `<a class="spotify" style="--accent:${d.accent}" href="${d.spotify}" target="_blank" rel="noopener">Spotify ↗</a></div>`;
+        dialog.showModal();
+      });
+    });
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+  </script>
+</Base>

@@ -1,0 +1,88 @@
+---
+import '../styles/global.css';
+import '../styles/brand.css';
+import '../styles/motion.css';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+const {
+  title,
+  description = 'Duck Vandal: cinco patos, un callejón y una firma que cada quien tiene que encontrar. Lee su lore y deja tu arte en el muro.',
+  image = '/art/poster.webp',
+} = Astro.props;
+const fullTitle = title ? `${title} · Duck Vandal` : 'Duck Vandal · Tienes toda la hoja';
+const path = Astro.url.pathname;
+const nav = [
+  ['/lore/', 'Lore'],
+  ['/pandilla/', 'Pandilla'],
+  ['/musica/', 'Cabina'],
+  ['/muro/', 'Muro'],
+  ['/marca/', 'Marca'],
+];
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#121111" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site ?? Astro.url).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=IBM+Plex+Mono:wght@500;700&family=Permanent+Marker&display=swap"
+    />
+    <title>{fullTitle}</title>
+  </head>
+  <body>
+    <a class="skip" href="#main">Saltar al contenido</a>
+    <header class="site-header">
+      <a href="/" class="logo" aria-label="Duck Vandal, inicio">
+        <span class="logo-duck">DUCK</span><span class="logo-vandal">VANDAL</span>
+      </a>
+      <nav aria-label="Secciones">
+        {nav.map(([href, label]) => (
+          <a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>{label}</a>
+        ))}
+      </nav>
+    </header>
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div>
+          <a href="/" class="logo" aria-label="Duck Vandal, inicio"><span class="logo-duck">DUCK</span><span class="logo-vandal">VANDAL</span></a>
+          <p class="tag-line">{site.tagline}</p>
+        </div>
+        <nav aria-label="Pie de página">
+          <a href="/lore/">Lore</a>
+          <a href="/pandilla/">Pandilla</a>
+          <a href="/musica/">La Cabina</a>
+          <a href="/muro/">Muro de la comunidad</a>
+          <a href="/extras/">Taller</a>
+          <a href="/marca/">Kit de marca</a>
+        </nav>
+        <p class="footer-note">
+          Etiqueta tu arte con <strong>{site.hashtag}</strong>.<br />
+          Personajes y arte © sus creadores. Las piezas del muro pertenecen a quien las firma.
+        </p>
+      </div>
+    </footer>
+    <script>
+      import '../scripts/motion.ts';
+    </script>
+  </body>
+</html>

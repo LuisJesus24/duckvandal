@@ -1,0 +1,64 @@
+# Panel de administración de Duck Vandal (Decap CMS)
+# Local: corre `npm run dev` y, en otra terminal, `npm run cms`, luego abre /admin/
+# Producción: cambia `repo` por tu repositorio de GitHub (ver README).
+backend:
+  name: github
+  repo: TU-USUARIO/duck-vandal-astro # <- cámbialo
+  branch: main
+  base_url: https://api.netlify.com # si publicas en Netlify; en otro host usa tu propio servidor OAuth
+  auth_endpoint: auth
+
+local_backend: true
+
+media_folder: public/muro
+public_folder: /muro
+# Tip: sube imágenes en WebP de máx. 1200 px de lado (~900 KB) para que el sitio cargue rápido.
+
+locale: es
+site_url: /
+
+collections:
+  - name: muro
+    label: Muro de la comunidad
+    label_singular: Pieza
+    folder: src/content/muro
+    extension: json
+    format: json
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    summary: '{{title}} · {{artist}}'
+    sortable_fields: [date, title, artist]
+    fields:
+      - { label: Título, name: title, widget: string }
+      - { label: Artista (nombre o @ como quiere firmar), name: artist, widget: string }
+      - { label: Imagen, name: image, widget: image, choose_url: false }
+      - { label: Descripción de la imagen (para accesibilidad), name: alt, widget: string, hint: 'Ej. Morris en su patineta frente al mural, estilo acuarela' }
+      - label: Pato
+        name: duck
+        widget: select
+        required: false
+        options:
+          - { label: Duxter, value: duxter }
+          - { label: Cuakki, value: cuakki }
+          - { label: Aco, value: aco }
+          - { label: Morris, value: morris }
+          - { label: Enzo, value: enzo }
+      - { label: Reto, name: reto, widget: relation, collection: retos, search_fields: [title], value_field: '{{slug}}', display_fields: [title], required: false }
+      - { label: Enlace al perfil o publicación original, name: link, widget: string, required: false, hint: 'Debe empezar con https://' }
+      - { label: Fecha, name: date, widget: datetime, date_format: 'YYYY-MM-DD', time_format: false, format: 'YYYY-MM-DD' }
+      - { label: Publicada, name: published, widget: boolean, default: true, hint: 'Desmárcala para ocultarla sin borrarla' }
+
+  - name: retos
+    label: Retos
+    label_singular: Reto
+    folder: src/content/retos
+    extension: json
+    format: json
+    create: true
+    slug: '{{slug}}'
+    summary: '{{order}}. {{title}}'
+    sortable_fields: [order]
+    fields:
+      - { label: Título, name: title, widget: string }
+      - { label: Descripción, name: text, widget: text }
+      - { label: Orden, name: order, widget: number, value_type: int, default: 10 }

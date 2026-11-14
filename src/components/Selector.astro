@@ -1,0 +1,13 @@
+---
+import { crew } from '../data/crew';
+const { current } = Astro.props;
+---
+
+<nav class="selector" aria-label="Personajes">
+  {crew.map((d) => (
+    <a href={`/pandilla/${d.id}/`} style={`--accent:${d.accent}`} aria-current={current === d.id ? 'page' : undefined}>
+      <img src={d.mini} width="144" height="144" alt="" loading="lazy" />
+      {d.name}
+    </a>
+  ))}
+</nav>

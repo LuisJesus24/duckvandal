@@ -1,0 +1,13 @@
+---
+import Base from '../../layouts/Base.astro';
+import { extras } from '../../data/crew';
+---
+
+<Base title="Extras" description="Actividades del Callejón: tarjeta, juego, libreta y más.">
+  <div class="page-head"><h2>Más del Callejón</h2></div>
+  <nav class="entry-grid" aria-label="Actividades" style="margin-top:20px">
+    {extras.map((e) => (
+      <a href={`/extras/${e.slug}/`}><span><strong>{e.title}</strong><small>{e.desc}</small></span><span class="entry-arrow" aria-hidden="true">↗</span></a>
+    ))}
+  </nav>
+</Base>

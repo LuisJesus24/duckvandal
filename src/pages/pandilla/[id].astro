@@ -1,0 +1,95 @@
+---
+import Base from '../../layouts/Base.astro';
+import Selector from '../../components/Selector.astro';
+import { crew } from '../../data/crew';
+
+export function getStaticPaths() {
+  return crew.map((d) => ({ params: { id: d.id }, props: { d } }));
+}
+const { d } = Astro.props;
+const isMorris = d.id === 'morris';
+const isEnzo = d.id === 'enzo';
+---
+
+<Base title={d.name} description={`${d.name}, ${d.role.toLowerCase()} de Duck Vandal. ${d.bio}`} image={d.art}>
+  <div class="page-head"><h2>Elige a tu pato</h2></div>
+  <Selector current={d.id} />
+
+  <article class={`character ${d.id}`} style={`--accent:${d.accent}`}>
+    <div class="character-stage">
+      <a href={`/galeria/${d.id}/`} aria-label={`Ver ilustración completa de ${d.name}`}>
+        <img src={d.art} width={d.artSize[0]} height={d.artSize[1]} alt={`Ilustración de ${d.name}`} decoding="async" />
+        <span>Ver ilustración ↗</span>
+      </a>
+      {d.id === 'cuakki' && <p><a class="return-link" href="/art/cuakki-hoja.webp">Ver boceto aprobado ↗</a></p>}
+    </div>
+
+    <div class="character-info">
+      <p class="kicker">{d.role}</p>
+      <h3>{d.name}</h3>
+      <blockquote>«{d.quote}»</blockquote>
+      <p class="character-bio">{d.bio}</p>
+      <div class="stack">
+        <a class="spotify" href={d.spotify} target="_blank" rel="noopener">Escuchar a {d.name} en Spotify ↗</a>
+        {isEnzo && <a class="sign" href="/historietas/#huellas">Mira lo que vio Enzo</a>}
+      </div>
+
+      {isMorris && (
+        <details class="morris-notebook">
+          <summary>Abrir la libreta de Morris</summary>
+          <p>«Hice este cartel para que se lea desde la otra banqueta. Prueba qué pasa si le das aire a las letras.»</p>
+          <fieldset>
+            <legend>Espacio entre letras</legend>
+            <label><input type="radio" name="spacing" value="tight" checked /> Apretadas</label>
+            <label><input type="radio" name="spacing" value="open" /> Separadas</label>
+          </fieldset>
+          <fieldset>
+            <legend>Desde dónde miras</legend>
+            <label><input type="radio" name="distance" value="near" checked /> De cerca</label>
+            <label><input type="radio" name="distance" value="far" /> De lejos</label>
+          </fieldset>
+          <div class="notebook-wall"><span class="notebook-poster" data-spacing="tight" data-distance="near" aria-label="Cartel: RUIDO">RUIDO</span></div>
+          <p>Míralo de lejos y alterna las dos versiones. Fíjate en el hueco entre la I y la D. Cuando las letras se tocan, cuesta más distinguir dónde acaba una y empieza la otra.</p>
+          <p>La próxima vez que veas un rótulo desde la banqueta de enfrente, fíjate en cómo separaron sus letras.</p>
+        </details>
+      )}
+
+      <dl class="stats">
+        <div><dt>Edad</dt><dd>{d.age}</dd></div>
+        <div><dt>Color</dt><dd>{d.color}</dd></div>
+        <div><dt>Estatura</dt><dd>{d.height}</dd></div>
+      </dl>
+
+      {isEnzo && (
+        <details class="enzo-art">
+          <summary>Enzo y su sombra de humo</summary>
+          <img id="enzo-humo" src="/art/enzo-humo.webp" width="800" alt="Enzo sentado con una figura de humo encima" loading="lazy" />
+          <button type="button" class="spotify" id="enzo-motion" aria-pressed="false">Reproducir animación</button>
+        </details>
+      )}
+    </div>
+  </article>
+
+  {isMorris && (
+    <script>
+      const nb = document.querySelector('.morris-notebook')!;
+      const poster = nb.querySelector<HTMLElement>('.notebook-poster')!;
+      nb.addEventListener('change', () => {
+        poster.dataset.spacing = nb.querySelector<HTMLInputElement>('[name=spacing]:checked')!.value;
+        poster.dataset.distance = nb.querySelector<HTMLInputElement>('[name=distance]:checked')!.value;
+      });
+    </script>
+  )}
+  {isEnzo && (
+    <script>
+      const btn = document.getElementById('enzo-motion')!;
+      const img = document.getElementById('enzo-humo') as HTMLImageElement;
+      btn.addEventListener('click', () => {
+        const playing = btn.getAttribute('aria-pressed') === 'true';
+        img.src = playing ? '/art/enzo-humo.webp' : '/art/enzo-humo.gif';
+        btn.setAttribute('aria-pressed', String(!playing));
+        btn.textContent = playing ? 'Reproducir animación' : 'Volver a la ilustración fija';
+      });
+    </script>
+  )}
+</Base>

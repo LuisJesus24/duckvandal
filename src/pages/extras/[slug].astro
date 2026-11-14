@@ -1,0 +1,156 @@
+---
+import Base from '../../layouts/Base.astro';
+import { crew, extras, quiz } from '../../data/crew';
+
+export function getStaticPaths() {
+  return extras.map((e) => ({ params: { slug: e.slug }, props: { e } }));
+}
+const { e } = Astro.props;
+---
+
+<Base title={e.title} description={e.desc}>
+  <div class="page-head">
+    <a class="return-link" href="/">← Volver al Callejón</a>
+    <h2>{e.title}</h2>
+  </div>
+
+  {e.slug === 'versiones' && (
+    <>
+      <p class="lead">El mural apareció una sola vez. Esto fue lo que vio cada pato.</p>
+      <div class="extra-list">
+        {crew.map((d) => (
+          <details style={`--accent:${d.accent}`}>
+            <summary>{d.name}</summary>
+            <blockquote>«{d.version}»</blockquote>
+            <a href={`/pandilla/${d.id}/`}>Ver ficha</a>
+          </details>
+        ))}
+      </div>
+    </>
+  )}
+
+  {e.slug === 'libreta' && (
+    <div class="extra-list">
+      <details open>
+        <summary>Letras rojas</summary>
+        <img src="/art/letras-rojas.webp" alt="Lettering rojo de Duck Vandal" loading="lazy" />
+        <p>El borde negro separa las letras rojas del concreto y deja que el nombre se lea de lejos.</p>
+      </details>
+      <details>
+        <summary>Letras blancas</summary>
+        <img src="/art/letras-blancas.webp" alt="Lettering blanco de Duck Vandal" loading="lazy" />
+        <p>El blanco sostiene el contraste sobre el fondo morado y deja que la ropa se lleve el color.</p>
+      </details>
+      <details>
+        <summary>Del mural al sticker</summary>
+        <img src="/art/sticker.webp" alt="Diseño del sticker grupal" loading="lazy" />
+        <p>Las poses se juntan y el contorno azul amarra al grupo en una sola silueta.</p>
+      </details>
+    </div>
+  )}
+
+  {e.slug === 'calle' && (
+    <div class="extra-list">
+      <article>
+        <img src="/art/sticker.webp" alt="Arte del sticker grupal" width="600" loading="lazy" />
+        <h3>Sticker grupal</h3>
+        <p>Diseño digital. Aquí irán las fotos del sticker en tablas, bazares y eventos.</p>
+      </article>
+    </div>
+  )}
+
+  {e.slug === 'juego' && (
+    <>
+    <div id="quiz" aria-live="polite"></div>
+    <script define:vars={{ crew, quiz }}>
+      const body = document.getElementById('quiz');
+      function show(step, score) {
+        if (step === quiz.length) {
+          body.innerHTML = `<p>Acertaste <strong>${score} de ${quiz.length}</strong>.</p><button type="button" class="sign">Volver a jugar</button>`;
+          body.querySelector('button').onclick = () => show(0, 0);
+          body.querySelector('button').focus();
+          return;
+        }
+        const { q, a, fact, clue } = quiz[step];
+        body.innerHTML =
+          `<img class="quiz-clue" src="/art/vineta-${clue}.webp" alt="Pista visual" loading="lazy"><p>Pregunta ${step + 1} de ${quiz.length}</p><h3 tabindex="-1">${q}</h3>` +
+          `<div class="quiz-choices">${crew.map((d) => `<button type="button" class="sign" style="--accent:${d.accent}" value="${d.id}">${d.name}</button>`).join('')}</div>` +
+          `<p role="status"></p><button type="button" class="sign next" hidden>${step + 1 === quiz.length ? 'Ver resultado' : 'Siguiente'}</button>`;
+        if (step) body.querySelector('h3').focus();
+        const next = body.querySelector('.next');
+        body.querySelectorAll('.quiz-choices button').forEach((b) => {
+          b.onclick = () => {
+            const ok = b.value === a;
+            body.querySelectorAll('.quiz-choices button').forEach((x) => (x.disabled = true));
+            body.querySelector('[role=status]').textContent =
+              (ok ? '¡Acertaste! ' : `La respuesta es ${crew.find((d) => d.id === a).name}. `) + fact;
+            next.hidden = false;
+            next.onclick = () => show(step + 1, score + Number(ok));
+            next.focus();
+          };
+        });
+      }
+      show(0, 0);
+    </script>
+    </>
+  )}
+
+  {e.slug === 'tarjeta' && (
+    <div class="card-maker">
+      <form id="card-form">
+        <label>Pato
+          <select name="pato">{crew.map((d) => <option value={d.id}>{d.name}</option>)}</select>
+        </label>
+        <label>Fondo
+          <select name="color">
+            <option value="#201b1b">Asfalto</option>
+            <option value="#552020">Rojo</option>
+            <option value="#343b53">Azul nocturno</option>
+          </select>
+        </label>
+        <label>Tu apodo <input name="nick" maxlength="22" placeholder="Tu apodo" /></label>
+        <button type="submit" class="sign" disabled>Descargar tarjeta PNG</button>
+        <p id="card-status" role="status"></p>
+      </form>
+      <canvas id="card" width="1080" height="1920" role="img" aria-label="Vista previa de tu tarjeta"></canvas>
+      <script define:vars={{ crew }}>
+        const form = document.getElementById('card-form');
+        const canvas = document.getElementById('card');
+        const ctx = canvas.getContext('2d');
+        const btn = form.querySelector('button');
+        const status = document.getElementById('card-status');
+        let rev = 0;
+        async function draw() {
+          const cur = ++rev;
+          const data = new FormData(form);
+          const d = crew.find((c) => c.id === data.get('pato'));
+          btn.disabled = true;
+          const img = new Image();
+          img.src = d.art;
+          try { await img.decode(); } catch { status.textContent = 'No se pudo cargar la ilustración.'; return; }
+          if (cur !== rev) return;
+          ctx.fillStyle = data.get('color'); ctx.fillRect(0, 0, 1080, 1920);
+          ctx.fillStyle = '#ff574d'; ctx.fillRect(70, 240, 940, 14);
+          ctx.fillStyle = '#f5ecda'; ctx.font = 'bold 94px sans-serif'; ctx.fillText('DUCK VANDAL', 70, 205, 940);
+          const H = 1173, w = Math.min(880, H * img.width / img.height), h = w * img.height / img.width;
+          ctx.drawImage(img, (1080 - w) / 2, 298 + (H - h) / 2, w, h);
+          ctx.font = 'bold 120px sans-serif'; ctx.fillText(d.name.toUpperCase(), 70, 1650, 940);
+          ctx.font = 'bold 64px sans-serif'; ctx.fillText(data.get('nick').trim() || 'EL CALLEJÓN', 70, 1770, 940);
+          status.textContent = ''; btn.disabled = false;
+        }
+        form.addEventListener('input', draw);
+        form.addEventListener('submit', (ev) => {
+          ev.preventDefault();
+          canvas.toBlob((blob) => {
+            if (!blob) { status.textContent = 'No se pudo descargar la tarjeta.'; return; }
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'mi-tarjeta-duck-vandal.png'; a.click();
+            setTimeout(() => URL.revokeObjectURL(url), 30000);
+          });
+        });
+        draw();
+      </script>
+    </div>
+  )}
+</Base>

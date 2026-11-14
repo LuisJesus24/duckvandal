@@ -1,0 +1,158 @@
+---
+import Base from '../layouts/Base.astro';
+import { crew } from '../data/crew';
+import { getCollection } from 'astro:content';
+import { site } from '../data/site';
+
+const retos = (await getCollection('retos'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((r) => ({ id: r.id, title: r.data.title, text: r.data.text }));
+const pieces = (await getCollection('muro'))
+  .filter((p) => p.data.published)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .map((p) => p.data);
+
+const { instagram, email } = site.submit;
+const mailto = email ? `mailto:${email}?subject=${encodeURIComponent('Mi pieza para el muro de Duck Vandal')}` : '';
+const igUrl = instagram ? `https://instagram.com/${instagram}` : '';
+const hasChannel = Boolean(mailto || igUrl);
+const retoTitle = (id?: string) => retos.find((r) => r.id === id)?.title;
+---
+
+<Base title="Muro" description="El muro de la comunidad de Duck Vandal: retos, inspiración y las piezas que la gente dibuja.">
+  <div class="page-head">
+    <p class="kicker">Comunidad</p>
+    <h2>El muro</h2>
+    <p class="lead" style="font-size:1.25rem;max-width:56ch">
+      Un espacio para inspirarte y compartir tu versión de Duck Vandal. Dibuja, firma con tu nombre y deja
+      tu pieza junto a las demás.
+    </p>
+  </div>
+
+  <section class="section" aria-labelledby="piezas" style="margin-top:32px">
+    <div class="section-head">
+      <div><h2 id="piezas" style="font-size:clamp(36px,5vw,64px)">Piezas de la comunidad</h2></div>
+      <a class="sign" href="#enviar">Enviar mi pieza</a>
+    </div>
+    {pieces.length === 0 ? (
+      <>
+        <div class="wall-empty" aria-label="Espacios disponibles">
+          <div class="slot">La primera pieza puede ser tuya</div>
+          <div class="slot">Aquí va la siguiente</div>
+          <div class="slot">Y la siguiente</div>
+          <div class="slot">Firma en grande</div>
+        </div>
+        <p class="lead">El muro está recién pintado. Cada pieza aprobada aparece aquí con su crédito.</p>
+      </>
+    ) : (
+      <div class="wall">
+        {pieces.map((p) => (
+          <figure>
+            <img src={p.image} alt={p.alt} loading="lazy" />
+            <figcaption>
+              <strong>{p.title}</strong>
+              <span>
+                por {p.link ? <a href={p.link} target="_blank" rel="noopener">{p.artist}</a> : p.artist}
+                {p.duck && ` · ${crew.find((d) => d.id === p.duck)?.name}`}
+                {retoTitle(p.reto) && ` · ${retoTitle(p.reto)}`}
+              </span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    )}
+  </section>
+
+  <section class="section" aria-labelledby="retos">
+    <div class="section-head">
+      <div><h2 id="retos" style="font-size:clamp(36px,5vw,64px)">Retos para inspirarte</h2><p>¿Sin idea? Empieza por uno. No hace falta que sea perfecto, hace falta que sea tuyo.</p></div>
+    </div>
+    <div class="reto-grid">
+      {retos.map((r, i) => (
+        <article class="reto">
+          <span class={`tape ${i % 2 ? 'red' : ''}`}>Reto {i + 1}</span>
+          <h3>{r.title}</h3>
+          <p>{r.text}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="inspo">
+    <div class="section-head">
+      <div><h2 id="inspo" style="font-size:clamp(36px,5vw,64px)">Material de inspiración</h2><p>Arte oficial para estudiar trazo, color y lettering. Úsalo como referencia, no lo vuelvas a publicar como tuyo.</p></div>
+    </div>
+    <div class="inspo">
+      {crew.map((d) => (
+        <a href={`/galeria/${d.id}/`}><img src={d.art} alt={`Referencia de ${d.name}`} loading="lazy" /><span>{d.name}</span></a>
+      ))}
+      <a href="/galeria/letras-rojas/"><img src="/art/letras-rojas.webp" alt="Lettering rojo" loading="lazy" /><span>Letras rojas</span></a>
+      <a href="/galeria/letras-blancas/"><img src="/art/letras-blancas.webp" alt="Lettering blanco" loading="lazy" /><span>Letras blancas</span></a>
+      <a href="/galeria/muro/"><img src="/art/muro.webp" alt="Muro de concreto" loading="lazy" /><span>Muro</span></a>
+      <a href="/galeria/sticker/"><img src="/art/sticker.webp" alt="Sticker grupal" loading="lazy" /><span>Sticker</span></a>
+    </div>
+  </section>
+
+  <section class="section" id="enviar" aria-labelledby="como">
+    <div class="section-head"><h2 id="como" style="font-size:clamp(36px,5vw,64px)">Cómo se comparte</h2></div>
+    <ol class="rules">
+      <li><strong>Hazla tuya</strong>Pieza original, hecha por ti. Sin calcar ni usar arte ajeno.</li>
+      <li><strong>Fírmala</strong>Tu nombre o tu @. Así aparecerá en el muro.</li>
+      <li><strong>Envíala</strong>Mándanos la imagen con el texto que prepares abajo.</li>
+      <li><strong>Revisión</strong>Vemos que cumpla las reglas y la publicamos con tu crédito.</li>
+    </ol>
+
+    <div class="community-band" style="margin-top:28px">
+      <div>
+        <h2 style="font-size:clamp(36px,5vw,64px)">Prepara tu envío</h2>
+        <form class="caption-box" id="caption-form">
+          <label>Título de tu pieza <input name="title" maxlength="80" required /></label>
+          <label>Tu nombre o @ de Instagram <input name="artist" maxlength="60" required /></label>
+          <label>Pato <select name="duck"><option value="">Ninguno en particular</option>{crew.map((d) => <option value={d.name}>{d.name}</option>)}</select></label>
+          <label>Reto <select name="reto"><option value="">Libre</option>{retos.map((r) => <option value={r.title}>{r.title}</option>)}</select></label>
+          <label>Texto listo para copiar <textarea id="caption-out" readonly></textarea></label>
+          <button class="sign" type="button" id="copy">Copiar texto</button>
+          <p id="copy-status" role="status" style="margin:0;color:var(--muted)"></p>
+        </form>
+      </div>
+      <div>
+        <h3 style="font-size:2.2rem">Envíala por</h3>
+        {hasChannel ? (
+          <p class="stack">
+            {igUrl && <a class="sign" href={igUrl} target="_blank" rel="noopener">Instagram @{instagram}</a>}
+            {mailto && <a class="spotify" href={mailto}>Correo</a>}
+          </p>
+        ) : (
+          <p class="tape">Canal de envío: próximamente</p>
+        )}
+        <h3 style="font-size:2.2rem;margin-top:22px">Reglas del muro</h3>
+        <ul style="padding-left:18px;color:var(--muted)">
+          <li>Solo arte original y con tu firma.</li>
+          <li>Nada ofensivo, de odio ni que exponga a otras personas.</li>
+          <li>Nos das permiso de mostrarla aquí con tu crédito. Sigue siendo tuya.</li>
+          <li>Puedes pedir que la quitemos cuando quieras.</li>
+          <li>Etiqueta tus publicaciones con <strong>{site.hashtag}</strong>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <script define:vars={{ tag: site.hashtag }}>
+    const form = document.getElementById('caption-form');
+    const out = document.getElementById('caption-out');
+    const status = document.getElementById('copy-status');
+    function build() {
+      const f = new FormData(form);
+      const parts = [`«${f.get('title') || 'Sin título'}»`, `por ${f.get('artist') || '…'}`];
+      if (f.get('duck')) parts.push(`Pato: ${f.get('duck')}`);
+      if (f.get('reto')) parts.push(`Reto: ${f.get('reto')}`);
+      out.value = parts.join(' · ') + ` ${tag}`;
+    }
+    form.addEventListener('input', build);
+    build();
+    document.getElementById('copy').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(out.value); status.textContent = 'Copiado.'; }
+      catch { out.select(); status.textContent = 'Selecciona el texto y cópialo.'; }
+    });
+  </script>
+</Base>

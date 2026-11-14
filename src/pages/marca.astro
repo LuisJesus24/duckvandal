@@ -1,0 +1,102 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, palette } from '../data/site';
+
+const downloads = [
+  ['/art/poster.webp', 'Póster nocturno'],
+  ['/art/sticker.webp', 'Sticker grupal'],
+  ['/art/letras-rojas.webp', 'Letras rojas'],
+  ['/art/letras-blancas.webp', 'Letras blancas'],
+  ['/art/muro.webp', 'Muro de concreto'],
+  ['/art/callejon-1440.webp', 'El Callejón'],
+];
+---
+
+<Base title="Kit de marca" description="Logo, colores, tipografía y tono de Duck Vandal.">
+  <div class="page-head">
+    <p class="kicker">Identidad</p>
+    <h2>Kit de marca</h2>
+    <p class="lead" style="font-size:1.25rem;max-width:56ch">Las reglas para que Duck Vandal se vea y suene igual en todos lados.</p>
+  </div>
+
+  <section class="section" aria-labelledby="esencia" style="margin-top:32px">
+    <div class="section-head"><h2 id="esencia" style="font-size:clamp(36px,5vw,64px)">Esencia</h2></div>
+    <div class="manifesto">
+      <div>
+        <p class="marker" style="font-size:clamp(2.4rem,6vw,4.5rem);line-height:1;color:#f6e267;margin:0 0 12px">{site.tagline}</p>
+        <p>Duck Vandal habla de encontrar tu propia firma. Nace de la calle, pero no presume: acompaña. Es comunidad antes que producto.</p>
+      </div>
+      <div class="voice">
+        <blockquote>«Aquí no se copia, se practica.»</blockquote>
+        <blockquote>«Hazla más grande. Cabe.»</blockquote>
+        <span>Ejemplos de voz</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="logo">
+    <div class="section-head"><h2 id="logo" style="font-size:clamp(36px,5vw,64px)">Logo</h2><p>Wordmark en Barlow Condensed Black. “DUCK” en el color del fondo opuesto y “VANDAL” en rojo spray, con su goteo.</p></div>
+    <div class="logo-showcase">
+      <div class="logo-tile"><span class="logo"><span class="logo-duck">DUCK</span><span class="logo-vandal">VANDAL</span></span></div>
+      <div class="logo-tile light"><span class="logo"><span class="logo-duck">DUCK</span><span class="logo-vandal">VANDAL</span></span></div>
+      <div class="logo-tile red"><span class="logo"><span class="logo-duck">DUCK</span><span class="logo-vandal">VANDAL</span></span></div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="color">
+    <div class="section-head"><h2 id="color" style="font-size:clamp(36px,5vw,64px)">Paleta</h2><p>Toca un color para copiar su código.</p></div>
+    <div class="swatches">
+      {palette.map((c) => (
+        <button class="swatch" type="button" data-hex={c.hex} style={`--c:${c.hex}`}>
+          <i></i><b>{c.name}</b><code>{c.hex}</code><small>{c.use}</small>
+        </button>
+      ))}
+    </div>
+    <p id="swatch-status" role="status" class="lead" style="min-height:1.5em"></p>
+  </section>
+
+  <section class="section" aria-labelledby="tipo">
+    <div class="section-head"><h2 id="tipo" style="font-size:clamp(36px,5vw,64px)">Tipografía</h2></div>
+    <div class="reto-grid">
+      <div class="type-sample"><b>Títulos · Barlow Condensed Black</b><div style="font:900 3.4rem/.95 var(--display);text-transform:uppercase">Firma lo tuyo</div></div>
+      <div class="type-sample"><b>Rotulador · Permanent Marker</b><div class="marker" style="font-size:2.2rem;color:#f6e267;line-height:1.1">Tienes toda la hoja</div></div>
+      <div class="type-sample"><b>Datos · IBM Plex Mono</b><div style="font:700 1.1rem var(--mono)">24 años · Verde · 1.79 m</div></div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="usos">
+    <div class="section-head"><h2 id="usos" style="font-size:clamp(36px,5vw,64px)">Usos</h2></div>
+    <div class="do-dont">
+      <div class="yes"><h3 style="font-size:2rem">Sí</h3><ul>
+        <li>Fondo asfalto con texto hueso y acentos rojos.</li>
+        <li>Un color de pato como acento por pieza, no cinco a la vez.</li>
+        <li>Dar siempre crédito al artista de la comunidad.</li>
+      </ul></div>
+      <div class="no"><h3 style="font-size:2rem">No</h3><ul>
+        <li>Deformar, rotar o recolorear el logo.</li>
+        <li>Texto gris claro sobre fondos claros o rojos.</li>
+        <li>Vender el arte oficial o presentarlo como propio.</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="descargas">
+    <div class="section-head"><h2 id="descargas" style="font-size:clamp(36px,5vw,64px)">Descargas</h2><p>Para prensa, fondos de pantalla y referencias.</p></div>
+    <div class="inspo">
+      {downloads.map(([src, name]) => (
+        <a href={src} download><img src={src} alt={name} loading="lazy" /><span>{name} ↓</span></a>
+      ))}
+    </div>
+  </section>
+
+  <script>
+    const status = document.getElementById('swatch-status')!;
+    document.querySelectorAll<HTMLButtonElement>('.swatch').forEach((b) =>
+      b.addEventListener('click', async () => {
+        const hex = b.dataset.hex!;
+        try { await navigator.clipboard.writeText(hex); status.textContent = `${hex} copiado.`; }
+        catch { status.textContent = `Código: ${hex}`; }
+      })
+    );
+  </script>
+</Base>

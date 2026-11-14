@@ -1,0 +1,115 @@
+---
+import Base from '../layouts/Base.astro';
+
+const pages = [
+  {
+    title: 'La firma',
+    img: '/art/primer-encuentro-1.webp',
+    alt: 'Enzo practica el tag de Duxter en clase y, al verlo pintar por la ventana, saca el celular.',
+    lines: [
+      ['cap', 'Última hora. Monterrey.'],
+      ['Profe', 'La actividad la terminan al timbre.'],
+      ['Enzo', 'Sí, profe. Ya casi.'],
+      ['cap', 'Enzo lleva semanas haciendo la misma firma en la última hoja. Afuera, alguien acaba de pintarla en la barda.'],
+      ['Enzo', 'Ah, la raza sale de la… Aguanta. ¿Es él?'],
+    ],
+  },
+  {
+    title: 'La foto',
+    img: '/art/primer-encuentro-2.webp',
+    alt: 'Duxter alcanza a Enzo a la salida y descubre su firma repetida en la libreta.',
+    lines: [
+      ['cap', 'A la salida, junto a la reja.'],
+      ['Duxter', 'Ey. La foto. ¿A quién se la mandaste?'],
+      ['Enzo', 'A nadie, güey. Te lo juro. La quería pa’ ver cómo cerraste la R.'],
+      ['Duxter', 'A ver, enséñamela.'],
+      ['cap', 'Al sacar el celular, Enzo deja la libreta abierta. Duxter reconoce su firma.'],
+      ['Duxter', '¿También andas firmando con mi tag?'],
+      ['Enzo', 'Nomás está en mi libreta.'],
+    ],
+  },
+  {
+    title: 'La última hoja',
+    img: '/art/primer-encuentro-3.webp',
+    alt: 'Enzo borra la foto y le muestra a Duxter sus intentos de escribir ENZO. Duxter le pide que haga el tag en grande.',
+    lines: [
+      ['cap', 'En la banqueta. Enzo borra la foto y pasa la hoja.'],
+      ['Duxter', '¿Y pa’ qué lo hiciste tantas veces?'],
+      ['Enzo', 'Quería ver si podía hacer uno que se viera así. Mira. Este sí es mío.'],
+      ['cap', 'En el margen hay tres intentos de escribir ENZO.'],
+      ['Duxter', 'La Z está chida. La O se ahoga aquí.'],
+      ['Enzo', 'Es que si la hago más grande, ya no cabe.'],
+      ['Duxter', 'Tienes toda la hoja, güey. A ver cómo sale en grande.'],
+    ],
+  },
+];
+
+const pilot = [
+  { who: 'Duxter', img: '/art/vineta-1.webp', alt: 'Duxter frente a la firma recién pintada', scene: 'Se planta frente al muro. La pintura todavía escurre.', line: '¿Quién firmó por nosotros?' },
+  { who: 'Cuakki', img: '/art/vineta-2.webp', alt: 'Cuakki se toma una selfie junto al mural', scene: 'Saca el celular y se encuadra junto al mural.', line: 'Si alguien pregunta, ese trazo sí me salió a la primera.' },
+  { who: 'Aco', img: '/art/vineta-3.webp', alt: 'Aco y su perro descubren huellas de pintura', scene: 'Señala el piso. Hay huellas de pintura blanca entre el mural y la entrada.', line: 'Cuakki. Baja el celular.' },
+  { who: 'Morris', img: '/art/vineta-4.webp', alt: 'Morris sale en su patineta', scene: 'Deja caer la tabla y se sube de un salto.', line: 'Ya era hora de que este callejón tuviera algo que perseguir.' },
+  { who: 'Enzo', img: '/art/vineta-5.webp', alt: 'Enzo frena a Morris al ver las huellas', scene: 'Lo agarra de la manga. Las huellas de pintura terminan justo donde están parados.', line: 'Espérate. Van hacia acá.', id: 'huellas' },
+];
+---
+
+<Base title="Historietas" description="Historietas de Duck Vandal: el primer encuentro de Enzo y Duxter y el piloto ¿Quién pintó eso?">
+  <div class="page-head"><h2>Historietas</h2></div>
+
+  <article aria-labelledby="encuentro">
+    <p class="kicker">Historieta de origen</p>
+    <h3 id="encuentro">El primer encuentro</h3>
+    <p class="lead">Enzo lleva semanas copiando la firma de Duxter en su libreta. Una tarde en Monterrey lo ve pintar desde el salón y le toma una foto.</p>
+    <ol class="origin-pages">
+      {pages.map((p) => (
+        <li>
+          <h4>{p.title}</h4>
+          <img src={p.img} alt={p.alt} width="1024" height="1536" loading="lazy" />
+          <details>
+            <summary>Leer la escena</summary>
+            {p.lines.map(([who, text]) =>
+              who === 'cap' ? <p class="comic-caption">{text}</p> : <p><strong>{who}</strong> —{text}</p>
+            )}
+          </details>
+        </li>
+      ))}
+    </ol>
+  </article>
+
+  <details class="pilot-archive" id="piloto">
+    <summary>Historieta piloto · ¿Quién pintó eso?</summary>
+    <article aria-labelledby="piloto-title">
+      <img src="/art/poster.webp" alt="Póster nocturno de la pandilla" loading="lazy" width="640" />
+      <p class="kicker">Historieta piloto</p>
+      <h3 id="piloto-title">¿Quién pintó eso?</h3>
+      <p>Los cinco llegan al Callejón y encuentran un mural recién pintado con su firma. El problema es que ninguno dice haberlo hecho.</p>
+      <ol class="storyboard" aria-label="Viñetas del borrador">
+        {pilot.map((v) => (
+          <li id={v.id} tabindex={v.id ? -1 : undefined}>
+            <img src={v.img} alt={v.alt} width="960" loading="lazy" />
+            <h4>{v.who}</h4>
+            <p class="scene">{v.scene}</p>
+            <p>—{v.line}</p>
+          </li>
+        ))}
+      </ol>
+      <nav class="story-links" aria-label="Sigue la pista">
+        <a class="sign" href="/extras/versiones/">Leer lo que vio Enzo</a>
+        <a class="spotify" href="/pandilla/enzo/">Volver a su ficha</a>
+      </nav>
+    </article>
+  </details>
+
+  <script>
+    // Abre el piloto si llegas con #huellas o #piloto
+    const open = () => {
+      const h = location.hash.slice(1);
+      if (h !== 'huellas' && h !== 'piloto') return;
+      const el = document.getElementById(h)!;
+      (el.closest('details') as HTMLDetailsElement).open = true;
+      el.scrollIntoView();
+    };
+    open();
+    addEventListener('hashchange', open);
+  </script>
+</Base>

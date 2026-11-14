@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import { gallery } from '../../data/crew';
+---
+
+<Base title="Galería" description="Murales, pósters y stickers de Duck Vandal.">
+  <div class="page-head">
+    <h2>Galería</h2>
+    <p class="lead">Abre una ilustración para verla completa.</p>
+  </div>
+  <div class="art-grid">
+    {gallery.map((g) => (
+      <a class="tile" href={`/galeria/${g.id}/`}>
+        <img src={`/art/${g.id}.webp`} alt="" loading="lazy" />
+        <strong>{g.name} ↗</strong>
+      </a>
+    ))}
+  </div>
+</Base>

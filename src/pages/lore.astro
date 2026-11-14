@@ -1,0 +1,73 @@
+---
+import Base from '../layouts/Base.astro';
+import { crew } from '../data/crew';
+---
+
+<Base title="Lore" description="El mundo de Duck Vandal: el Callejón, su pandilla y el misterio del mural con su firma.">
+  <div class="page-head">
+    <p class="kicker">El mundo</p>
+    <h2>Lore</h2>
+    <p class="lead" style="font-size:1.25rem;max-width:56ch">
+      Una noche aparece un mural con la firma de la pandilla y ninguno lo pintó. Esta es la historia de cómo
+      llegaron ahí, quiénes son y qué huellas siguen en el piso.
+    </p>
+  </div>
+
+  <section class="section" aria-labelledby="cronologia" style="margin-top:32px">
+    <div class="section-head"><h2 id="cronologia" style="font-size:clamp(36px,5vw,64px)">Cronología</h2></div>
+    <ol class="timeline">
+      <li>
+        <a class="chapter" href="/historietas/">
+          <img src="/art/primer-encuentro-1.webp" alt="" loading="lazy" />
+          <div>
+            <p class="kicker">Capítulo 0 · Origen</p>
+            <h3>El primer encuentro</h3>
+            <p>Enzo copia la firma de Duxter en su libreta. Una tarde en Monterrey lo ve pintar y le toma una foto.</p>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a class="chapter" href="/historietas/#piloto">
+          <img src="/art/poster.webp" alt="" loading="lazy" />
+          <div>
+            <p class="kicker">Capítulo 1 · Piloto</p>
+            <h3>¿Quién pintó eso?</h3>
+            <p>Los cinco llegan al Callejón y encuentran un mural recién pintado con su firma. Ninguno dice haberlo hecho.</p>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a class="chapter" href="/extras/versiones/">
+          <img src="/art/vineta-5.webp" alt="" loading="lazy" style="object-position:center" />
+          <div>
+            <p class="kicker">Expediente · Testimonios</p>
+            <h3>El mismo día, cinco versiones</h3>
+            <p>El mural apareció una sola vez. Esto fue lo que vio cada pato, con sus propias palabras.</p>
+          </div>
+        </a>
+      </li>
+    </ol>
+  </section>
+
+  <section class="section" aria-labelledby="glosario">
+    <div class="section-head"><h2 id="glosario" style="font-size:clamp(36px,5vw,64px)">Palabras del Callejón</h2></div>
+    <dl class="glossary">
+      <div><dt>El Callejón</dt><dd>El punto de encuentro de la pandilla, con su mural y sus luces de neón.</dd></div>
+      <div><dt>Tag / firma</dt><dd>La marca personal de cada quien. Copiarla es el primer paso; hacer la propia, el segundo.</dd></div>
+      <div><dt>Las huellas</dt><dd>Pisadas de pintura blanca entre el mural y la entrada. Terminan justo donde están parados.</dd></div>
+      <div><dt>La Cabina</dt><dd>El rincón de la música: una playlist en casete por cada pato.</dd></div>
+    </dl>
+  </section>
+
+  <section class="section" aria-labelledby="patos">
+    <div class="section-head"><h2 id="patos" style="font-size:clamp(36px,5vw,64px)">Quién es quién</h2></div>
+    <div class="crew-strip">
+      {crew.map((d) => (
+        <a class="duck-card" href={`/pandilla/${d.id}/`} style={`--accent:${d.accent}`}>
+          <img src={d.art} alt={`Ilustración de ${d.name}`} loading="lazy" />
+          <div><strong>{d.name}</strong><small>{d.role}</small></div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>

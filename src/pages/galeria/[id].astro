@@ -1,0 +1,26 @@
+---
+import Base from '../../layouts/Base.astro';
+import { crew, gallery } from '../../data/crew';
+
+export function getStaticPaths() {
+  return [
+    ...gallery.map((g) => ({
+      params: { id: g.id },
+      props: { title: g.name, src: `/art/${g.id}.webp`, back: '/galeria/', backLabel: 'la galería' },
+    })),
+    ...crew.map((d) => ({
+      params: { id: d.id },
+      props: { title: d.name, src: d.art, back: `/pandilla/${d.id}/`, backLabel: 'la ficha' },
+    })),
+  ];
+}
+const { title, src, back, backLabel } = Astro.props;
+---
+
+<Base title={title} image={src}>
+  <div class="page-head">
+    <a class="return-link" href={back}>← Volver a {backLabel}</a>
+    <h2>{title}</h2>
+  </div>
+  <img class="full-art" src={src} alt={title} />
+</Base>
